@@ -6,8 +6,3 @@ export const Posts = styled.div`
    gap:15px;
 	margin:30px 0;
 `
-
-export const Title = styled.h1`
-   color:black;
-	text-align:center;
-`
