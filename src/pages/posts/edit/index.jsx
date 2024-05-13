@@ -1,3 +1,24 @@
 import React from "react";
+import { useParams } from "react-router-dom";
+import { PostForm } from "../components/PostForm";
+import { useDispatch, useSelector } from "react-redux";
+import { editPost } from "../../../redux/slices/postsSlices";
 
-export const EditPostPage = () => <div>Это страница редактирования постов</div>
+export const EditPostPage = () => {
+	const { id } = useParams()
+
+	const dispatch = useDispatch()
+	const { list } = useSelector((state) => state.posts.posts)
+
+	const onSubmitForm = (formValues) => {
+		dispatch(editPost(formValues))
+	}
+
+	if (!list) {
+		return <>Пост не найден</>
+	}
+
+	const findedPost = list.find((item) => item.id === Number(id))
+
+	return <PostForm title={`Редактирование поста - ${id}`} onSubmitForm={onSubmitForm} defaulValues={findedPost} />
+}

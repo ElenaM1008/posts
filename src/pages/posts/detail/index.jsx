@@ -5,23 +5,29 @@ import { Container } from "../../../components/Container";
 import * as SC from './styles'
 import { Link } from "../../../components/Link";
 import { useDispatch, useSelector } from "react-redux";
-import { getPostById } from "../../../redux/slices/postsSlices";
+import { getPostById, showPost } from "../../../redux/slices/postsSlices";
 
 export const DetailPostPage = () => {
 	const { id } = useParams()
-
+	const { list } = useSelector((state) => state.posts.posts)
 	const postForView = useSelector((state) => state.posts.postForView)
 	const dispatch = useDispatch()
 
 	useEffect(() => {
-		dispatch(getPostById(Number(id)))
-	}, [id])
+		const intId = Number(id)
+		const findedPost = list ? list.find((item) => item.id === intId) : undefined
+		if (findedPost) {
+			dispatch(showPost(findedPost))
+		} else {
+			dispatch(getPostById(intId))
+		}
+	}, [id, list, dispatch])
 
-	if(postForView.loading){
+	if (postForView.loading) {
 		return <Container>Loading...</Container>
 	}
 
-	if (!postForView.post || !postForView.post.hasOwnProperty('id') ) {
+	if (!postForView.post || !postForView.post.hasOwnProperty('id')) {
 		return <>Пост не найден</>
 	}
 
@@ -37,6 +43,7 @@ export const DetailPostPage = () => {
 			<div style={{ clear: 'both' }} />
 			<SC.LinkWrapper>
 				<Link to='/posts/'>Обратно к публикациям</Link>
+				<Link to={`/posts/${post.id}/edit`}>Редактировать пост</Link>
 			</SC.LinkWrapper>
 		</Container>
 	)

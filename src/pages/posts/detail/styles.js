@@ -10,6 +10,9 @@ export const Image = styled.img`
 `
 
 export const LinkWrapper= styled.div`
-   text-align:center;
 	margin: 15px 0 0 0;
+	display: flex;
+	gap: 15px;
+	justify-content:center;
+	width: 100%;
 `
