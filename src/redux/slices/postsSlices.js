@@ -46,15 +46,20 @@ export const postsSlice = createSlice({
 				if (post.id === action.payload.id) {
 					return action.payload
 				}
-
 				return post
 			})
-
 		},
 		addPost: (state, action) => {
 			const newPost = { ...action.payload }
 			newPost.id = new Date().getTime()
 			state.posts.list = state.posts.list ? [newPost, ...state.posts.list] : [newPost]
+		},
+		deletePost: (state, action) => {
+			state.posts.list = state.posts.list.filter((post) => post.id !== action.payload.id)
+			state.postForView = {
+				post: null,
+				loading: false,
+			}
 		},
 		showPost: (state, action) => {
 			state.postForView = {
@@ -104,6 +109,6 @@ export const postsSlice = createSlice({
 	},
 })
 
-export const { editPost, addPost, showPost } = postsSlice.actions
+export const { editPost, addPost, showPost, deletePost } = postsSlice.actions
 
 export default postsSlice.reducer
