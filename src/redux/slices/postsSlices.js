@@ -67,7 +67,7 @@ export const postsSlice = createSlice({
 		sortPosts: (state, action) => {
 			const newList = [...state.posts.list]
 			state.posts = {
-				list: action.payload === 'name'? newList.sort((a, b) => a.title > b.title ? 1 : -1) : null,
+				list: action.payload === 'name'? newList.sort((a, b) => a.title > b.title ? 1 : -1) : newList.sort((a, b) => a.id < b.id ? 1 : -1),
 				loading: false,
 				currentPage: 1,
 				perPage: 10,
