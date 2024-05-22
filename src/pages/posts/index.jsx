@@ -3,10 +3,14 @@ import { Posts } from '../../components/Posts'
 import { Container } from "../../components/ui/Container";
 import { Typo } from "../../components/ui/Typo";
 import { useDispatch, useSelector } from "react-redux";
-import { getPosts } from "../../redux/slices/postsSlices";
+import { getPosts, onClickCurrentPage } from "../../redux/slices/postsSlices";
+import { LoaderSpinner } from '../../components/ui/LoaderSpinner'
+import { Pagination } from "../../components/ui/Pagination";
+import { Search } from "../../components/Search";
+import { SortPosts } from "../../components/SortPosts";
 
 export const PostsPage = () => {
-	const { list, loading } = useSelector((state) => state.posts.posts)
+	const { list, loading, currentPage, perPage } = useSelector((state) => state.posts.posts)
 	const dispatch = useDispatch()
 
 	useEffect(() => {
@@ -16,17 +20,30 @@ export const PostsPage = () => {
 	}, [list, dispatch])
 
 	if (!list && loading) {
-		return <Container>Loading...</Container>
+		return <LoaderSpinner />
 	}
 
 	if (!list) {
 		return <>404</>
 	}
 
+	const totalPages = Math.ceil(list.length / perPage)
+
+	const lastIndex = currentPage * perPage
+	const firstIndex = lastIndex - perPage
+	const slicedPosts = list.slice(firstIndex, lastIndex)
+
+	const handleCurrentPage = (page) => {
+		dispatch(onClickCurrentPage(page))
+	}
+
 	return (
 		<Container>
 			<Typo>Публикации</Typo>
-			<Posts posts={list} />
+			<Search />
+			<SortPosts />
+			<Posts posts={slicedPosts} />
+			<Pagination currentPage={currentPage} totalPages={totalPages} handleCurrentPage={handleCurrentPage} />
 		</Container>
 	)
 }

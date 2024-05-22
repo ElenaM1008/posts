@@ -6,6 +6,9 @@ import * as SC from './styles'
 import { Link } from "../../../components/ui/Link";
 import { useDispatch, useSelector } from "react-redux";
 import { getPostById, showPost, deletePost } from "../../../redux/slices/postsSlices";
+import { Button } from "../../../components/ui/Button";
+import { Modal } from "../../../components/ui/Modal";
+import {LoaderSpinner} from '../../../components/ui/LoaderSpinner'
 
 export const DetailPostPage = () => {
 	const { id } = useParams()
@@ -39,7 +42,7 @@ export const DetailPostPage = () => {
 	}, [id, list, dispatch])
 
 	if (postForView.loading) {
-		return <Container>Loading...</Container>
+		return <LoaderSpinner/>
 	}
 
 	if (!postForView.post || !postForView.post.hasOwnProperty('id')) {
@@ -53,15 +56,12 @@ export const DetailPostPage = () => {
 	return (
 		<Container>
 			{postForDelete &&
-				<SC.ModalWrapper>
-					<SC.Modal>
-						<SC.ModalText>Вы точно уверены, что хотите удалить публикацию с ID - {postForDelete.id}?</SC.ModalText>
-						<SC.ModalContent>
-							<SC.DeleteButton onClick={onDeletePost}> Да</SC.DeleteButton>
-							<button onClick={() => setPostForDelete(null)}>Нет</button>
-						</SC.ModalContent>
-					</SC.Modal>
-				</SC.ModalWrapper>
+				<Modal
+					text={`Вы точно уверены, что хотите удалить публикацию с ID - ${postForDelete.id}?`}
+				>
+					<Button onClick={onDeletePost}> Да</Button>
+					<Button onClick={() => setPostForDelete(null)}>Нет</Button>
+				</Modal>
 			}
 			<Typo>{post.title}</Typo>
 			<SC.Image src={image} alt={post.title} />

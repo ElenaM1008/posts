@@ -4,7 +4,10 @@ import { postsAPI } from '../../api/postsAPI'
 const initialState = {
 	posts: {
 		list: null,
-		loading: false
+		loading: false,
+		currentPage: 1,
+		perPage: 10,
+		value: 'default',
 	},
 	postForView: {
 		post: null,
@@ -54,8 +57,26 @@ export const postsSlice = createSlice({
 			newPost.id = new Date().getTime()
 			state.posts.list = state.posts.list ? [newPost, ...state.posts.list] : [newPost]
 		},
+		onClickCurrentPage: (state, action) => {
+			state.posts.currentPage = action.payload
+		},
+		searchByTitle: (state, action) => {
+			const newList = [...state.posts.list]
+			state.posts.list = action.payload.length === 0 ? newList: newList.filter((post) => post.title.toLowerCase().includes(action.payload.toLowerCase()))
+		},
+		sortPosts: (state, action) => {
+			const newList = [...state.posts.list]
+			state.posts = {
+				list: action.payload === 'name'? newList.sort((a, b) => a.title > b.title ? 1 : -1) : newList,
+				loading: false,
+				currentPage: 1,
+				perPage: 10,
+				value: action.payload,
+			}
+		},
 		deletePost: (state, action) => {
 			state.posts.list = state.posts.list.filter((post) => post.id !== action.payload.id)
+			state.freshPosts.posts = state.freshPosts.posts.filter((post) => post.id !== action.payload.id)
 			state.postForView = {
 				post: null,
 				loading: false,
@@ -70,7 +91,7 @@ export const postsSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(getPostById.pending, (state, action) => {
+			.addCase(getPostById.pending, (state) => {
 				state.postForView = {
 					post: null,
 					loading: true,
@@ -82,7 +103,7 @@ export const postsSlice = createSlice({
 					loading: false,
 				}
 			})
-			.addCase(getPosts.pending, (state, action) => {
+			.addCase(getPosts.pending, (state) => {
 				state.posts = {
 					list: null,
 					loading: true,
@@ -92,9 +113,12 @@ export const postsSlice = createSlice({
 				state.posts = {
 					list: action.payload,
 					loading: false,
+					currentPage: 1,
+					perPage: 10,
+					value: 'default',
 				}
 			})
-			.addCase(getFreshPosts.pending, (state, action) => {
+			.addCase(getFreshPosts.pending, (state) => {
 				state.freshPosts = {
 					posts: null,
 					loading: true,
@@ -109,6 +133,6 @@ export const postsSlice = createSlice({
 	},
 })
 
-export const { editPost, addPost, showPost, deletePost } = postsSlice.actions
+export const { editPost, addPost, showPost, deletePost, onClickCurrentPage, searchByTitle, sortPosts } = postsSlice.actions
 
 export default postsSlice.reducer
