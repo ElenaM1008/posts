@@ -1,7 +1,7 @@
 export const postsAPI = {
 	async fetchPosts() {
 		try {
-			const response = await fetch(`https://jsonplaceholder.typicode.com/posts?_sort=id&_order=desc&_limit=3`)
+			const response = await fetch(`https://jsonplaceholder.typicode.com/posts?_sort=id&_order=desc`)
 			const post = await response.json()
 			return post
 		}

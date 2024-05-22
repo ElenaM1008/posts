@@ -69,6 +69,5 @@ export const AuthPage = () => {
 				<button type="submit" disabled={disabled}>Регистрация</button>
 			</Form>
 		</Container>
-
 	)
 }
