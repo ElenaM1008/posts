@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Posts } from '../../components/Posts'
 import { Container } from "../../components/ui/Container";
 import { Typo } from "../../components/ui/Typo";
@@ -10,6 +10,7 @@ import { Search } from "../../components/Search";
 import { SortPosts } from "../../components/SortPosts";
 
 export const PostsPage = () => {
+	const [searchTerm, setSearchTerm] = useState('')
 	const { list, loading, currentPage, perPage } = useSelector((state) => state.posts.posts)
 	const dispatch = useDispatch()
 
@@ -27,11 +28,15 @@ export const PostsPage = () => {
 		return <>404</>
 	}
 
-	const totalPages = Math.ceil(list.length / perPage)
+	const filteredList = () => {
+		return list.filter((post) => post.title.toLowerCase().includes(searchTerm.toLowerCase()))
+	}
+
+	const totalPages = Math.ceil(filteredList().length / perPage)
 
 	const lastIndex = currentPage * perPage
 	const firstIndex = lastIndex - perPage
-	const slicedPosts = list.slice(firstIndex, lastIndex)
+	const slicedPosts = filteredList().slice(firstIndex, lastIndex)
 
 	const handleCurrentPage = (page) => {
 		dispatch(onClickCurrentPage(page))
@@ -40,7 +45,7 @@ export const PostsPage = () => {
 	return (
 		<Container>
 			<Typo>Публикации</Typo>
-			<Search />
+			<Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 			<SortPosts />
 			<Posts posts={slicedPosts} />
 			<Pagination currentPage={currentPage} totalPages={totalPages} handleCurrentPage={handleCurrentPage} />

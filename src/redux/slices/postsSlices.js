@@ -60,14 +60,10 @@ export const postsSlice = createSlice({
 		onClickCurrentPage: (state, action) => {
 			state.posts.currentPage = action.payload
 		},
-		searchByTitle: (state, action) => {
-			const newList = [...state.posts.list]
-			state.posts.list = action.payload.length === 0 ? null : newList.filter((post) => post.title.toLowerCase().includes(action.payload.toLowerCase()))
-		},
 		sortPosts: (state, action) => {
 			const newList = [...state.posts.list]
 			state.posts = {
-				list: action.payload === 'name'? newList.sort((a, b) => a.title > b.title ? 1 : -1) : newList.sort((a, b) => a.id < b.id ? 1 : -1),
+				list: action.payload === 'name' ? newList.sort((a, b) => a.title > b.title ? 1 : -1) : newList.sort((a, b) => a.id < b.id ? 1 : -1),
 				loading: false,
 				currentPage: 1,
 				perPage: 10,
@@ -133,6 +129,6 @@ export const postsSlice = createSlice({
 	},
 })
 
-export const { editPost, addPost, showPost, deletePost, onClickCurrentPage, searchByTitle, sortPosts } = postsSlice.actions
+export const { editPost, addPost, showPost, deletePost, onClickCurrentPage, sortPosts } = postsSlice.actions
 
 export default postsSlice.reducer
