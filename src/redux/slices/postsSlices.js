@@ -7,7 +7,8 @@ const initialState = {
 		loading: false,
 		currentPage: 1,
 		perPage: 10,
-		value: 'default',
+		sortValue: 'default',
+		search: null,
 	},
 	postForView: {
 		post: null,
@@ -60,15 +61,17 @@ export const postsSlice = createSlice({
 		onClickCurrentPage: (state, action) => {
 			state.posts.currentPage = action.payload
 		},
-		sortPosts: (state, action) => {
-			const newList = [...state.posts.list]
-			state.posts = {
-				list: action.payload === 'name' ? newList.sort((a, b) => a.title > b.title ? 1 : -1) : newList.sort((a, b) => a.id < b.id ? 1 : -1),
-				loading: false,
-				currentPage: 1,
-				perPage: 10,
-				value: action.payload,
+		filteredSearch: (state, action) => {
+			const filteredPosts = state.posts.search.filter((post) => post.title.toLowerCase().includes(action.payload.toLowerCase()))
+			if (state.posts.sortValue !== 'default') {
+				filteredPosts.sort((a, b) => a.title > b.title ? 1 : -1)
 			}
+			state.posts.list = filteredPosts
+			state.posts.currentPage = 1
+		},
+		sortPosts: (state, action) => {
+			state.posts.sortValue = action.payload
+			state.posts.list = action.payload === 'name' ? state.posts.list.sort((a, b) => a.title > b.title ? 1 : -1) : state.posts.list.sort((a, b) => a.id < b.id ? 1 : -1)
 		},
 		deletePost: (state, action) => {
 			state.posts.list = state.posts.list.filter((post) => post.id !== action.payload.id)
@@ -111,7 +114,8 @@ export const postsSlice = createSlice({
 					loading: false,
 					currentPage: 1,
 					perPage: 10,
-					value: 'default',
+					sortValue: 'default',
+					search: [...action.payload],
 				}
 			})
 			.addCase(getFreshPosts.pending, (state) => {
@@ -129,6 +133,6 @@ export const postsSlice = createSlice({
 	},
 })
 
-export const { editPost, addPost, showPost, deletePost, onClickCurrentPage, sortPosts } = postsSlice.actions
+export const { editPost, addPost, showPost, deletePost, onClickCurrentPage, sortPosts, filteredSearch } = postsSlice.actions
 
 export default postsSlice.reducer
